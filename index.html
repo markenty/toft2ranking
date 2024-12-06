@@ -2,20 +2,16 @@
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
 <script>
-  // Firebase configuration
+  // Firebase configuration (replace with your actual project details)
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    databaseURL: "https://totf2-ranking-default-rtdb.firebaseio.com/" // Your Firebase Realtime Database URL
   };
 
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const database = firebase.database();
 </script>
+
 
 <!DOCTYPE html>
 <html lang="en">
