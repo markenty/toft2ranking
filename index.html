@@ -1,0 +1,194 @@
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thrill of the Fight 2 Leaderboard</title>
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1c1c1c;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 90%;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      color: #f7c04a;
+    }
+
+    .form-section, .leaderboard-section {
+      background: #2b2b2b;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .form-section input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #f7c04a;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      color: #1c1c1c;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #f9d973;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      padding: 10px;
+      background: #333;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .leaderboard-section h2 {
+      color: #f7c04a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Thrill of the Fight 2: Leaderboard</h1>
+    </header>
+
+    <div class="form-section">
+      <h2>Enter Your Stats</h2>
+      <input type="text" id="username" placeholder="Enter Your Username" />
+      <input type="text" id="rank" placeholder="Enter Your Rank" />
+      <input type="number" id="total-score" placeholder="Enter Your Total Score" />
+      <input type="text" id="lobby-code" placeholder="Enter Lobby Code (Optional)" />
+      <button id="submit-stats">Submit Stats</button>
+    </div>
+
+    <div class="leaderboard-section">
+      <h2>Leaderboard: Top 10 Players</h2>
+      <ul id="leaderboard"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      databaseURL: "https://totf2-ranking-default-rtdb.firebaseio.com/",
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Function to save player stats to Firebase
+    function savePlayerStats(username, rank, score, lobbyCode) {
+      const playerRef = database.ref("players").push();
+      playerRef.set({
+        username: username,
+        rank: rank,
+        score: score,
+        lobbyCode: lobbyCode || "N/A",
+      }).then(() => {
+        alert("Player stats saved successfully!");
+        updateLeaderboard();
+      }).catch((error) => {
+        console.error("Error saving player stats:", error);
+      });
+    }
+
+    // Event listener for the submit button
+    document.getElementById("submit-stats").addEventListener("click", () => {
+      const username = document.getElementById("username").value;
+      const rank = document.getElementById("rank").value;
+      const score = parseInt(document.getElementById("total-score").value);
+      const lobbyCode = document.getElementById("lobby-code").value;
+
+      if (!username || !rank || isNaN(score)) {
+        alert("Please fill out all fields correctly.");
+        return;
+      }
+
+      savePlayerStats(username, rank, score, lobbyCode);
+    });
+
+    // Function to update the leaderboard
+    function updateLeaderboard() {
+      const leaderboardElement = document.getElementById("leaderboard");
+      leaderboardElement.innerHTML = "";
+
+      database.ref("players")
+        .orderByChild("score")
+        .limitToLast(10)
+        .once("value")
+        .then((snapshot) => {
+          const players = [];
+          snapshot.forEach((childSnapshot) => {
+            players.push(childSnapshot.val());
+          });
+
+          players.sort((a, b) => b.score - a.score);
+
+          players.forEach((player, index) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `#${index + 1} - Username: ${player.username}, Score: ${player.score}`;
+            leaderboardElement.appendChild(listItem);
+          });
+        }).catch((error) => {
+          console.error("Error updating leaderboard:", error);
+        });
+    }
+
+    // Initialize leaderboard on page load
+    updateLeaderboard();
+  </script>
+</body>
+</html>
