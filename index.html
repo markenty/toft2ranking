@@ -26,13 +26,12 @@
   const analytics = getAnalytics(app);
 </script>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thrill of the Fight 2 Leaderboard</title>
+    <title>Thrill of the Fight 2 - Full Stats</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
     <style>
@@ -102,12 +101,16 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
+
+        .leaderboard-section h2 {
+            color: #f7c04a;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Thrill of the Fight 2: Leaderboard</h1>
+            <h1>Thrill of the Fight 2: Full Stats</h1>
         </header>
 
         <div class="form-section">
@@ -120,13 +123,13 @@
         </div>
 
         <div class="leaderboard-section">
-            <h2>Leaderboard: Top 10 Players</h2>
+            <h2>All Players</h2>
             <ul id="leaderboard"></ul>
         </div>
     </div>
 
     <script>
-        // Firebase configuration (replace with your own Firebase project details)
+        // Firebase configuration (replace with your Firebase project details)
         const firebaseConfig = {
             databaseURL: "https://totf2-ranking-default-rtdb.firebaseio.com/"
         };
@@ -151,30 +154,22 @@
             });
         }
 
-        // Function to update leaderboard
+        // Function to display all players in the database
         function updateLeaderboard() {
             const leaderboardElement = document.getElementById('leaderboard');
             leaderboardElement.innerHTML = '';
 
             database.ref('players')
-                .orderByChild('score')
-                .limitToLast(10)
                 .once('value')
                 .then((snapshot) => {
-                    const players = [];
                     snapshot.forEach((childSnapshot) => {
-                        players.push(childSnapshot.val());
-                    });
-
-                    players.sort((a, b) => b.score - a.score);
-
-                    players.forEach((player, index) => {
+                        const player = childSnapshot.val();
                         const listItem = document.createElement('li');
-                        listItem.textContent = `#${index + 1} - Username: ${player.username}, Score: ${player.score}`;
+                        listItem.textContent = `Username: ${player.username}, Rank: ${player.rank}, Score: ${player.score}, Lobby Code: ${player.lobbyCode}`;
                         leaderboardElement.appendChild(listItem);
                     });
                 }).catch((error) => {
-                    console.error("Error updating leaderboard:", error);
+                    console.error("Error fetching leaderboard:", error);
                 });
         }
 
