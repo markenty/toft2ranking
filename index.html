@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Test</title>
+    <title>Firebase Write Test</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
 </head>
 <body>
-    <h1>Firebase Realtime Database Test</h1>
-    <button id="test-button">Test Write</button>
+    <h1>Firebase Write Test</h1>
+    <button id="write-test">Test Write</button>
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -20,12 +20,11 @@
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Test write to Firebase
-        document.getElementById('test-button').addEventListener('click', () => {
-            const testRef = database.ref('test');
-            testRef.set({ testKey: "testValue" })
-                .then(() => alert("Test write successful!"))
-                .catch((error) => console.error("Error writing to Firebase:", error));
+        // Write test data
+        document.getElementById('write-test').addEventListener('click', () => {
+            database.ref('test').set({ key: "value" })
+                .then(() => alert("Data written successfully!"))
+                .catch((error) => console.error("Write failed:", error));
         });
     </script>
 </body>
